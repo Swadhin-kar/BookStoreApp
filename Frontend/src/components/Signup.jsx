@@ -2,12 +2,38 @@ import React from "react";
 import Navbar from "./Navbar";
 import Login from "./login";
 import { useForm } from "react-hook-form"
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const Signup = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         console.log('Signup data:', data);
-        // TODO: send data to server / show success state
+        const userInfo = {
+            fullname:data.fullname,
+            email:data.email,
+            password: data.password
+        }
+
+        await axios.post("http://localhost:4001/user/signup", userInfo)
+            .then((res) =>{
+                console.log(res.data)
+                if(res.data){
+                    toast.success('signup successful')
+                }
+
+                setTimeout(() => {
+                    window.location.href = "/"
+                }, 1500);
+
+                localStorage.setItem("Users", JSON.stringify(res.data.user))
+            }).catch((err) =>{
+                if (err.response) {
+                    console.log("Error is :", err);
+                    toast.error("Error :" + err.response.data.message)
+                }
+            })
+            
     };
 
     return (
@@ -21,7 +47,7 @@ const Signup = () => {
                             window.location.href = "/"
                             // document.getElementById('my_modal_2').showModal()
                         }}
-                    >
+                    > 
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -40,9 +66,9 @@ const Signup = () => {
                                 type="text"
                                 placeholder="Enter your name"
                                 className="w-full px-4 py-2 border border-gray-300  rounded-md outline-none bg-gray-50  text-gray-900  focus:ring-2 focus:ring-pink-500"
-                                {...register("name", { required: true })}
+                                {...register("fullname", { required: true })}
                             />
-                            {errors.name && <span className='text-red-500'>This field is required</span>}
+                            {errors.fullname && <span className='text-red-500'>This field is required</span>}
                         </div>
                         {/* Email */}
                         <div>
@@ -78,23 +104,24 @@ const Signup = () => {
                                 type="submit"
                                 className="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2 rounded-md transition-all duration-200"
                             >
-                                Login
+                                Signup
                             </button>
 
-                            <p className="text-sm text-gray-600 ">
-                                Have an account?{"Login"}
-                                <a
+                            <div className="text-sm text-gray-600 ">
+                                Have an account?{" "}
+                                <button
+                                    type="button"
                                     className="text-pink-500 hover:underline font-medium"
-                                    onClick={()=>{
-                                        document.getElementById("my_modal_2").showModal()
+                                    onClick={() => {
+                                        document.getElementById("my_modal_2").showModal();
                                     }}
                                 >
                                     Login
-                                </a>
-                                <Login />
-                            </p>
+                                </button>
+                            </div>
                         </div>
                     </form>
+                    <Login />
                 </div>
             </div>
         </>

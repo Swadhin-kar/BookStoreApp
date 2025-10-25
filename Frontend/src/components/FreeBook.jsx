@@ -83,19 +83,24 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Cards from './Cards';
+import axios from 'axios'
 
 const FreeBook = () => {
   const [filterList, setFilterList] = useState([]);
 
-  useEffect(() => {
-    fetch('/list.json')
-      .then((res) => res.json())
-      .then((data) => {
-        const freeItems = data.filter((item) => item.category === "Free");
-        setFilterList(freeItems);
-      })
-      .catch((err) => console.error("Error loading JSON:", err));
-  }, []);
+  useEffect(()=>{
+    const getBook = async()=>{
+      try {
+        const res = await axios.get('http://localhost:4001/book')
+        const freeItems = res.data.filter((item) => item.price === 0)
+        setFilterList(freeItems)
+      } catch (error) {
+        console.log("Error :", error)
+      }
+    }
+    getBook()
+  }, [])
+
 
   // console.log(filterList);
 
@@ -132,7 +137,8 @@ const FreeBook = () => {
     ],
   };
 
-  return (<>
+  return (
+  <>
     <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 ">
       <div className="text-center my-6">
         <h1 className="text-2xl md:text-3xl font-semibold">Free Books</h1>

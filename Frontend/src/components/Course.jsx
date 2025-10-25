@@ -1,18 +1,35 @@
 import React, { useEffect } from 'react'
 import Cards from './Cards'
 import {Link} from 'react-router-dom'
+import axios from 'axios'
+
 
 const Course = () => {
 
   const [data, setData] = React.useState([])
 
-  useEffect(() => {
-    fetch('/list.json')
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-      })
+  // data fetching from backend server
+  useEffect(() =>{
+    const getBook = async()=>{
+      try {
+        const res = await axios.get('http://localhost:4001/book')
+        console.log(res.data)
+        setData(res.data)
+      } catch (error) {
+        console.log("Error :", error)
+      }
+    }
+    getBook()
   }, [])
+
+  // // data fetching from local json file
+  // useEffect(() => {
+  //   fetch('/list.json')
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setData(data);
+  //     })
+  // }, [])
 
   console.log(data)
   return (

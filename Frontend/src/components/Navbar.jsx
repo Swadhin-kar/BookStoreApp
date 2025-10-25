@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Login from "./login";
+import Logout from "./Logout";
+import { useAuth } from "./AuthProvider";
 
 
 const Navbar = () => {
@@ -30,20 +32,6 @@ const Navbar = () => {
         }
     }, [theme]);
 
-    // const [theme, setTheme] = useState(localStorage.getItem("theme") ? localStorage.getItem("theme") : "light")
-
-    // const element = document.documentElement;
-    // useEffect(() => {
-    //     if (theme === "dark") {
-    //         element.classList.add("dark");
-    //         localStorage.setItem("theme", "dark");
-    //     } else {
-    //         element.classList.remove("dark");
-    //         localStorage.setItem("theme", "light");
-    //     }
-    // }, [theme]);
-
-
     // sticky navbar shadow
     const [sticky, setSticky] = useState(false)
     useEffect(() => {
@@ -66,6 +54,8 @@ const Navbar = () => {
             <li><a>About</a></li>
         </>
     );
+
+    const [authUser, setAuthUser] = useAuth();
 
     return (
         <div className={`max-w-screen-2xl container mx-auto fixed top-0 left-0 right-0 z-50 ${sticky ? "bg-base-100 shadow-md duration-100 transition-all ease-in-out" : "bg-transparent"}`}>
@@ -164,13 +154,16 @@ const Navbar = () => {
                         </svg>
                     </label>
 
-                    <div>
-                        <a className="bg-black text-white px-3 py-2 rounded-md hover:bg-gray-800 duration-300 cursor-pointer"
-                        onClick={()=>{document.getElementById("my_modal_2").showModal()}}>
-                            Login
-                        </a>
-                        <Login />
-                    </div>
+                    {
+                        authUser ? <Logout /> :
+                            <div>
+                                <a className="bg-black text-white px-3 py-2 rounded-md hover:bg-gray-800 duration-300 cursor-pointer"
+                                    onClick={() => { document.getElementById("my_modal_2").showModal() }}>
+                                    Login
+                                </a>
+                                <Login />
+                            </div>
+                    }
                 </div>
             </div>
         </div>
